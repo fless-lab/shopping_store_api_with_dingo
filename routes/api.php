@@ -28,7 +28,16 @@ $api->version('v1', function ($api) {
         return "Welcome to the Shopping Store API !!!";
     });
 
-    $api->post("/users/register",[UserController::class,"store"]);
-    $api->post("/users/login",[AuthController::class,"login"]);
+    $api->group(["prefix"=>"auth"],function($api){
+        $api->post("/register",[UserController::class,"store"]);
+        $api->post("/login",[AuthController::class,"login"]);
+        $api->group(["middleware"=>"api"],function($api){
+            $api->post("/me",[AuthController::class,"me"]);
+            $api->post("/token/refresh",[AuthController::class,"refresh"]);
+            $api->post("/logout",[AuthController::class,"logout"]);
+        });
+    });
+
+
 
 });
